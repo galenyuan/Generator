@@ -22,8 +22,6 @@ class Generator {
 		Object.assign(defaultOpts, opts);
 		this.options = defaultOpts;
 
-		this.extend();
-
 		let json = this.toJSON();
 		json = _.map(json, (item) => {			
 			return this.formatColumns(item);
@@ -58,16 +56,6 @@ class Generator {
 		}
 	}
 
-	fillUndefined (val) {
-		return '';
-	}
-
-	removeLineBreak (str, text) {
-		text = text || '';
-
-		return str ? str.replace(/\r\n/g, text) : undefined;
-	}
-
 	render (json) {
 		let template = fs.readFileSync(this.options.template, 'utf8');
 
@@ -78,10 +66,6 @@ class Generator {
 		return res;
 	}
 
-	getFileName (url) {
-		return path.basename(url, path.extname(url));
-	}
-
 	formatFileName (filename, srcname) {
 		filename = filename.indexOf('{src}') != -1 ? filename.replace(/{src}/g, this.getFileName(srcname)) : filename;
 		
@@ -90,9 +74,23 @@ class Generator {
 
 	exportFile (result, url) {
 		let filename = this.formatFileName(this.options.filename, this.options.src);
-		let file = fs.createWriteStream(path.join(__dirname, this.options.dist + '/' + filename));
+		let file = fs.createWriteStream(path.join(this.options.dist + '/' + filename));
 		file.write(this.render(result));
 		file.end();
+	}
+
+	fillUndefined (val) {
+		return '';
+	}
+
+	getFileName (url) {
+		return path.basename(url, path.extname(url));
+	}
+
+	replaceStr (str, from, to) {
+		str = str instanceof RegExp ? str : new RegExp(str, 'g');
+
+		return str.replace(from, to);
 	}
 }
 

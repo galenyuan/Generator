@@ -1,18 +1,23 @@
 {
-  "name": "generator",
-  "version": "0.0.1",
+  "name": "excel-generator",
+  "version": "0.0.4",
   "description": "Generate DB file from excel",
-  "main": "index.js",
+  "main": "./Generator.js",
   "dependencies": {
     "ejs": "^2.4.2",
     "glob": "^7.0.3",
     "lodash": "^4.13.1",
     "xlsx": "^0.8.0"
   },
-  "devDependencies": {},
-  "scripts": {
-    
-  },
+  "keywords": ["export data", "generator", "export excel", "excel"],
   "author": "Galen Yuan",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/galenyuan/Generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/galenyuan/Generator/issues"
+  },
+  "homepage": "https://github.com/galenyuan/Generator"
 }
