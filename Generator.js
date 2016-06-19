@@ -15,7 +15,7 @@ class Generator {
 			filename: '{src}.php',
 			template: './template.ejs',
 			sheet: 0,
-			symbol: null,
+			flag: null,
 			columns: {}
 		}
 
@@ -23,10 +23,11 @@ class Generator {
 		this.options = defaultOpts;
 
 		let json = this.toJSON();
-		json = _.map(json, (item) => {			
-			return this.formatColumns(item);
+		
+		json = _.map(json, (line) => {			
+			return this.formatColumns(line);
 		});
-
+		json = this.mergeMutiLine(json);
 		this.exportFile(json);
 	}
 
@@ -38,15 +39,14 @@ class Generator {
 		});
 	}
 
-	toJSON (url) {
+	toJSON(url) {
 		let excel = url ? xlsx.readFile(url) : xlsx.readFile(this.options.src);
 
 		let sheet = this.getSheet(this.options.sheet, excel);
-
 		return xlsx.utils.sheet_to_json(sheet);
 	}
 
-	getSheet (sheet, excel) {
+	getSheet(sheet, excel) {
 		if(typeof sheet == 'number') {
 			return excel.Sheets[excel.SheetNames[sheet]];
 		}else if(typeof sheet == 'string') {
@@ -56,7 +56,7 @@ class Generator {
 		}
 	}
 
-	render (json) {
+	render(json) {
 		let template = fs.readFileSync(this.options.template, 'utf8');
 
 		let res = EJS.render(template, {
@@ -66,28 +66,61 @@ class Generator {
 		return res;
 	}
 
-	formatFileName (filename, srcname) {
+	formatFileName(filename, srcname) {
 		filename = filename.indexOf('{src}') != -1 ? filename.replace(/{src}/g, this.getFileName(srcname)) : filename;
 		
 		return filename;
 	}
 
-	exportFile (result, url) {
+	exportFile(result, url) {
 		let filename = this.formatFileName(this.options.filename, this.options.src);
 		let file = fs.createWriteStream(path.join(this.options.dist + '/' + filename));
 		file.write(this.render(result));
 		file.end();
 	}
 
-	fillUndefined (val) {
+	mergeMutiLine(data) {
+		if(this.options.flag) {
+			let result = [];
+			_.forEach(data, (line, index) => {
+				if(!line[this.options.flag] && result.length) {
+					let prev = _.last(result);
+
+					_.forEach(line, (item, key) => {
+						prev[key] = item === undefined ? prev[key] : this.mergeToPrev(prev[key], item);
+					});
+				}else {
+					result.push(line);
+				}
+			});
+
+			return result;
+		}else {
+			return data;
+		}
+	}
+
+	mergeToPrev(prev, next) {
+		if(prev === undefined) {
+			prev = next;
+		}else if(Array.isArray(prev)) {
+			prev.push(next);
+		}else {
+			prev = [prev, next];
+		}
+
+		return prev;
+	}
+
+	fillUndefined(val) {
 		return '';
 	}
 
-	getFileName (url) {
+	getFileName(url) {
 		return path.basename(url, path.extname(url));
 	}
 
-	replaceStr (str, from, to) {
+	replaceStr(str, from, to) {
 		str = str instanceof RegExp ? str : new RegExp(str, 'g');
 
 		return str.replace(from, to);
