@@ -28,6 +28,7 @@ class Generator {
 			return this.formatColumns(line);
 		});
 		json = this.mergeMutiLine(json);
+		
 		this.exportFile(json);
 	}
 
@@ -35,7 +36,7 @@ class Generator {
 		let columnsFun = this.options.columns;
 
 		return _.mapValues(line, (val, key) => {
-			return columnsFun[key] ? columnsFun[key](val) : val; 
+			return (columnsFun[key] && val) ? columnsFun[key](val) : val; 
 		});
 	}
 
@@ -121,7 +122,7 @@ class Generator {
 	}
 
 	replaceStr(str, from, to) {
-		str = str instanceof RegExp ? str : new RegExp(str, 'g');
+		from = from instanceof RegExp ? from : new RegExp(from, 'g');
 
 		return str.replace(from, to);
 	}

@@ -1,6 +1,6 @@
 {
   "name": "excel-generator",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Generate DB file from excel",
   "main": "./Generator.js",
   "dependencies": {

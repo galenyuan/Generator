@@ -15,7 +15,7 @@ new Generator({
 			return 'test';
 		},
 		test5(str) {
-			this.replaceStr('\n', '');
+			Generator.prototype.replaceStr(str, '\n', '');
 		}
 	}
 });
