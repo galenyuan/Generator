@@ -16,7 +16,10 @@ class Generator {
 			template: './template.ejs',
 			sheet: 0,
 			flag: null,
-			columns: {}
+			columns: {},
+			formatJSON: (json) => {
+				return json;
+			}
 		}
 
 		Object.assign(defaultOpts, opts);
@@ -28,7 +31,8 @@ class Generator {
 			return this.formatColumns(line);
 		});
 		json = this.mergeMutiLine(json);
-		
+		json = this.options.formatJSON(json);
+
 		this.exportFile(json);
 	}
 
