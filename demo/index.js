@@ -9,7 +9,7 @@ new Generator({
 	filename: '{src}.php',
 	template: path.join(__dirname, 'template.ejs'),
 	sheet: 0,
-	symbol: null,
+	flag: null,
 	columns: {
 		test1(str) {
 			return 'test';
@@ -17,5 +17,15 @@ new Generator({
 		test5(str) {
 			Generator.prototype.replaceStr(str, '\n', '');
 		}
+	},
+	formatJSON: (json) => {
+		let res = [];
+
+		json.forEach((line) => {
+			line.test1 = 'formated';
+			res.push(line);
+		});
+
+		return res;
 	}
 });
